@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Poď do DeKa</title>
+<meta name="description" content="Pár otázok a zistíš, či ti sadne DeKa tím — detské katechézy.">
+<meta name="theme-color" content="#F6F5FB">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#F6F5FB;
+  --surface:#FFFFFF;
+  --ink:#171532;
+  --ink-soft:#57537C;
+  --line:#DCD9EC;
+  --edge:#171532;
+  --c1:#E0511F;
+  --c2:#0E7C86;
+  --c3:#C2255C;
+  --c4:#C97F00;
+  --c5:#5A3FD6;
+  --c6:#2E8B4F;
+  --on-accent:#FFFFFF;
+  --accent:var(--c1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#121127;
+    --surface:#1D1B38;
+    --ink:#F1EFFA;
+    --ink-soft:#ABA6CC;
+    --line:#332F58;
+    --edge:#514C8C;
+    --c1:#FF7A52;
+    --c2:#3FB8C2;
+    --c3:#F46294;
+    --c4:#E8AE33;
+    --c5:#9280F5;
+    --c6:#4FC178;
+    --on-accent:#141227;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#121127;
+  --surface:#1D1B38;
+  --ink:#F1EFFA;
+  --ink-soft:#ABA6CC;
+  --line:#332F58;
+  --edge:#514C8C;
+  --c1:#FF7A52;
+  --c2:#3FB8C2;
+  --c3:#F46294;
+  --c4:#E8AE33;
+  --c5:#9280F5;
+  --c6:#4FC178;
+  --on-accent:#141227;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Karla","Helvetica Neue",Arial,sans-serif;
+  font-size:16px;
+  line-height:1.5;
+  min-height:100%;
+  padding-block:24px 40px;
+  padding-left:16px;
+  padding-right:16px;
+  display:flex;
+  justify-content:center;
+}
+.wrap{width:100%;max-width:560px;display:flex;flex-direction:column;gap:22px}
+
+/* ---------- hlavička ---------- */
+.masthead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{
+  font-family:"Fraunces",Georgia,serif;
+  font-weight:700;
+  font-size:26px;
+  letter-spacing:-.01em;
+  margin:0;
+  position:relative;
+}
+.brand h1 .stroke{
+  display:block;position:absolute;left:0;right:0;bottom:-6px;height:7px;color:var(--accent);
+  transition:color .35s ease;
+}
+.brand span.sub{
+  font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);font-weight:700;
+}
+.counter{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ---------- postup ---------- */
+.progress{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+.seg{height:7px;border-radius:99px;background:var(--line);transition:background .3s ease,transform .3s ease}
+.seg.done{background:var(--seg-color);}
+.seg.now{background:var(--seg-color);transform:scaleY(1.7)}
+
+/* ---------- karta ---------- */
+.card{
+  background:var(--surface);
+  border:2px solid var(--edge);
+  border-radius:18px 22px 17px 21px;
+  padding:22px 20px 20px;
+  box-shadow:0 3px 0 var(--edge);
+  display:flex;flex-direction:column;gap:16px;
+}
+.eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin:0;
+}
+.q{
+  font-family:"Fraunces",Georgia,serif;
+  font-weight:600;font-size:clamp(23px,6.2vw,30px);line-height:1.15;
+  margin:0;text-wrap:balance;letter-spacing:-.015em;
+}
+.note{margin:0;color:var(--ink-soft);font-size:14.5px;max-width:48ch}
+
+.options{display:grid;gap:10px}
+.options[data-layout="row3"]{grid-template-columns:repeat(3,1fr)}
+.options[data-layout="row2"]{grid-template-columns:repeat(2,1fr)}
+@media (max-width:360px){
+  .options[data-layout="row2"]{grid-template-columns:1fr}
+}
+.opt{
+  font:inherit;font-weight:700;
+  text-align:left;
+  color:var(--ink);
+  background:var(--surface);
+  border:2px solid var(--edge);
+  border-radius:14px 17px 13px 16px;
+  padding:14px 15px;
+  cursor:pointer;
+  display:flex;align-items:center;gap:10px;
+  min-height:52px;
+  transition:transform .12s ease,background .18s ease,color .18s ease,box-shadow .12s ease;
+  box-shadow:0 2px 0 var(--edge);
+}
+.options[data-layout="row3"] .opt,.options[data-layout="row2"] .opt{justify-content:center;text-align:center;padding:14px 8px}
+.opt:hover{transform:translateY(-2px);box-shadow:0 4px 0 var(--edge)}
+.opt:active{transform:translateY(1px);box-shadow:0 1px 0 var(--edge)}
+.opt:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.opt[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);box-shadow:0 2px 0 var(--edge)}
+.opt .tick{
+  width:18px;height:18px;flex:0 0 18px;border-radius:50%;border:2px solid currentColor;opacity:.35;
+}
+.options[data-layout="row3"] .opt .tick,.options[data-layout="row2"] .opt .tick{display:none}
+.opt[aria-pressed="true"] .tick{opacity:1;background:currentColor}
+
+.reply{
+  display:flex;align-items:center;gap:8px;min-height:21px;
+  font-size:14px;color:var(--ink-soft);font-weight:500;
+}
+.reply b{color:var(--accent);font-weight:700}
+
+.footrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.back{
+  font:inherit;font-size:14px;font-weight:700;color:var(--ink-soft);
+  background:none;border:0;padding:6px 2px;cursor:pointer;border-radius:8px;
+}
+.back:hover{color:var(--ink)}
+.back:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.back[hidden]{display:none!important}
+
+/* ---------- záver ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:0;margin:0;list-style:none}
+.chips li{
+  font-size:12.5px;font-weight:700;border:1.5px solid var(--line);border-radius:99px;
+  padding:5px 11px;color:var(--ink-soft);background:var(--paper);
+}
+.chips li b{color:var(--ink);font-weight:700}
+.verdict{
+  font-family:"Fraunces",Georgia,serif;font-weight:700;
+  font-size:clamp(27px,7.6vw,38px);line-height:1.08;margin:0;letter-spacing:-.02em;text-wrap:balance;
+}
+.cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--accent);color:var(--on-accent);
+  border:2px solid var(--edge);border-radius:15px 18px 14px 17px;
+  box-shadow:0 3px 0 var(--edge);
+  font:inherit;font-weight:700;font-size:17px;
+  padding:16px 18px;text-decoration:none;cursor:pointer;
+  transition:transform .12s ease,box-shadow .12s ease;
+}
+.cta:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--edge)}
+.cta:active{transform:translateY(1px);box-shadow:0 1px 0 var(--edge)}
+.cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.cta svg{flex:0 0 auto}
+.formbox{
+  border:2px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--surface);
+}
+.formbox iframe{display:block;width:100%;height:760px;border:0}
+.warn{
+  border:2px dashed var(--c4);border-radius:12px;padding:12px 14px;
+  font-size:13.5px;color:var(--ink-soft);background:var(--paper);
+}
+.warn code{font-size:12.5px;background:var(--surface);padding:2px 5px;border-radius:5px;border:1px solid var(--line);word-break:break-all}
+.smallprint{font-size:13px;color:var(--ink-soft);margin:0;text-align:center}
+.restart{
+  font:inherit;font-size:13px;font-weight:700;color:var(--ink-soft);background:none;border:0;
+  cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:4px;border-radius:6px;
+}
+.restart:hover{color:var(--ink)}
+.restart:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.anim{animation:rise .3s cubic-bezier(.22,.9,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="brand">
+      <h1>DeKa tím
+        <svg class="stroke" viewBox="0 0 200 7" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M2 5.2C34 2.1 70 1.4 104 2.3c31 .8 62 2.4 94 1.1" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+        </svg>
+      </h1>
+      <span class="sub">detské katechézy</span>
+    </div>
+    <div class="counter" id="counter">1 / 6</div>
+  </header>
+
+  <div class="progress" id="progress" role="progressbar" aria-label="Postup" aria-valuemin="0" aria-valuemax="6" aria-valuenow="1"></div>
+
+  <main id="stage" aria-live="polite"></main>
+
+  <p class="smallprint">Trvá to menej ako minútu.</p>
+</div>
+
+<script>
+/* ============================================================
+   NASTAVENIE — sem vlož odkaz na váš Google formulár.
+   FORM_URL   : bežný odkaz (forms.gle/... alebo docs.google.com/forms/d/e/.../viewform)
+   EMBED_FORM : true = formulár sa zobrazí priamo v stránke,
+                false = zobrazí sa len tlačidlo, ktoré formulár otvorí.
+   ============================================================ */
+const FORM_URL  = "https://docs.google.com/forms/d/e/1FAIpQLScfN37FO8SW8bMNUp3-OwYFroP4I6U4TGB8zJYYVyV5S9jHGg/viewform";
+const EMBED_FORM = true;
+
+const STEPS = [
+  {
+    id: "kraj",
+    eyebrow: "Otázka 1",
+    q: "Z ktorej časti Slovenska si?",
+    note: "Pýtame sa len zo zvedavosti — v tíme máme všetky tri.",
+    layout: "row3",
+    options: [
+      { v: "Západ",  reply: "Západniar. Domáca pôda." },
+      { v: "Stred",  reply: "Stred — zlatá stredná cesta." },
+      { v: "Východ", reply: "Východ! Hej, aj vy ste tu." }
+    ]
+  },
+  {
+    id: "vikendy",
+    eyebrow: "Otázka 2",
+    q: "Chodíš cez víkendy domov, alebo ostávaš v Bratislave?",
+    note: "Katechézy bývajú cez víkend, tak sa potrebujeme zorientovať.",
+    layout: "row2",
+    options: [
+      { v: "Chodím domov", reply: "Úplne v pohode, počítame s tým." },
+      { v: "Ostávam v BA",  reply: "Super, to nám sedí." }
+    ]
+  },
+  {
+    id: "kapacita",
+    eyebrow: "Otázka 3",
+    q: "Máš čas aspoň 4× za semester ostať cez víkend v Bratislave?",
+    note: "Štyrikrát za semester. Viac netreba.",
+    layout: "row2",
+    options: [
+      { v: "Áno", reply: "To je presne toľko, koľko treba." },
+      { v: "Nie", reply: "Ozvi sa aj tak — vieme to poskladať." }
+    ]
+  },
+  {
+    id: "deti",
+    eyebrow: "Otázka 4",
+    q: "Máš rád deti?",
+    note: null,
+    layout: "row2",
+    options: [
+      { v: "Určite",       reply: "Vedeli sme to." },
+      { v: "Kto by nemal", reply: "Presne tak." }
+    ]
+  },
+  {
+    id: "pred-detmi",
+    eyebrow: "Otázka 5",
+    q: "Vieš si predstaviť, že pred partiou detí povieš príbeh?",
+    note: "Nikoho nehádžeme do vody. Prvý raz ideš s niekým skúsenejším.",
+    options: [
+      { v: "Jasné, to je moja parketa", reply: "Rátame s tebou." },
+      { v: "Radšej by som asistoval",   reply: "Aj to je plnohodnotná rola." },
+      { v: "Neviem, ale chcem skúsiť",  reply: "Najlepšia odpoveď zo všetkých." }
+    ]
+  },
+  {
+    id: "rola",
+    eyebrow: "Otázka 6",
+    q: "Čo ťa na tom láka najviac?",
+    note: "Podľa toho ti vieme nájsť miesto v tíme.",
+    options: [
+      { v: "Hry a aktivity",     reply: "Animátor telom aj dušou.",  tip: "Hry a aktivity" },
+      { v: "Príbeh a katechéza", reply: "Srdce celej katechézy.",    tip: "Katechéza" },
+      { v: "Hudba a spev",       reply: "Bez teba by bolo ticho.",   tip: "Hudba" },
+      { v: "Príprava a zákulisie", reply: "Ľudia, bez ktorých to nejde.", tip: "Zákulisie" }
+    ]
+  }
+];
+
+const COLORS = ["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)"];
+const FINAL_COLOR = "var(--c5)";
+
+const stage    = document.getElementById("stage");
+const progress = document.getElementById("progress");
+const counter  = document.getElementById("counter");
+const root     = document.documentElement;
+
+let index = 0;
+let answers = {};
+let advancing = false;
+
+function setAccent(color){
+  root.style.setProperty("--accent", color);
+}
+
+function renderProgress(){
+  progress.innerHTML = "";
+  STEPS.forEach((_, i) => {
+    const seg = document.createElement("div");
+    seg.className = "seg" + (i < index ? " done" : i === index ? " now" : "");
+    seg.style.setProperty("--seg-color", COLORS[i]);
+    progress.appendChild(seg);
+  });
+  progress.setAttribute("aria-valuenow", String(Math.min(index + 1, STEPS.length)));
+  counter.textContent = index >= STEPS.length ? "Hotovo" : (index + 1) + " / " + STEPS.length;
+}
+
+function renderStep(){
+  const step = STEPS[index];
+  setAccent(COLORS[index]);
+  renderProgress();
+  advancing = false;
+
+  const card = document.createElement("section");
+  card.className = "card anim";
+
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = step.eyebrow;
+  card.appendChild(eyebrow);
+
+  const heading = document.createElement("h2");
+  heading.className = "q";
+  heading.textContent = step.q;
+  card.appendChild(heading);
+
+  if (step.note){
+    const note = document.createElement("p");
+    note.className = "note";
+    note.textContent = step.note;
+    card.appendChild(note);
+  }
+
+  const list = document.createElement("div");
+  list.className = "options";
+  if (step.layout) list.dataset.layout = step.layout;
+
+  const reply = document.createElement("p");
+  reply.className = "reply";
+
+  step.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "opt";
+    btn.id = step.id + "-" + i;
+    btn.setAttribute("aria-pressed", answers[step.id] && answers[step.id].v === opt.v ? "true" : "false");
+
+    const tick = document.createElement("span");
+    tick.className = "tick";
+    tick.setAttribute("aria-hidden", "true");
+    btn.appendChild(tick);
+    btn.appendChild(document.createTextNode(opt.v));
+
+    btn.addEventListener("click", () => {
+      if (advancing) return;
+      advancing = true;
+      answers[step.id] = opt;
+      list.querySelectorAll(".opt").forEach(b => b.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", "true");
+      reply.innerHTML = "";
+      const b = document.createElement("b");
+      b.textContent = opt.reply;
+      reply.appendChild(b);
+      const wait = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 60 : 620;
+      setTimeout(() => {
+        index++;
+        index >= STEPS.length ? renderFinal() : renderStep();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, wait);
+    });
+
+    list.appendChild(btn);
+  });
+
+  card.appendChild(list);
+  card.appendChild(reply);
+
+  if (index > 0){
+    const footrow = document.createElement("div");
+    footrow.className = "footrow";
+    const back = document.createElement("button");
+    back.type = "button";
+    back.className = "back";
+    back.textContent = "← Späť";
+    back.addEventListener("click", () => { index--; renderStep(); });
+    footrow.appendChild(back);
+    card.appendChild(footrow);
+  }
+
+  stage.replaceChildren(card);
+}
+
+function renderFinal(){
+  setAccent(FINAL_COLOR);
+  index = STEPS.length;
+  renderProgress();
+
+  const tip = answers["rola"] && answers["rola"].tip;
+
+  const card = document.createElement("section");
+  card.className = "card anim";
+
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = "A je to";
+  card.appendChild(eyebrow);
+
+  const verdict = document.createElement("h2");
+  verdict.className = "verdict";
+  verdict.textContent = "Poď do DeKa tímu.";
+  card.appendChild(verdict);
+
+  const note = document.createElement("p");
+  note.className = "note";
+  note.textContent = tip
+    ? "Podľa odpovedí by ti sadlo „" + tip + "“. Nič sa tým nezaväzuješ — nechaj nám na seba kontakt a ozveme sa ti s detailmi."
+    : "Nechaj nám na seba kontakt a ozveme sa ti s detailmi.";
+  card.appendChild(note);
+
+  const chips = document.createElement("ul");
+  chips.className = "chips";
+  STEPS.forEach(step => {
+    const a = answers[step.id];
+    if (!a) return;
+    const li = document.createElement("li");
+    const b = document.createElement("b");
+    b.textContent = a.v;
+    li.appendChild(b);
+    chips.appendChild(li);
+  });
+  card.appendChild(chips);
+
+  const placeholder = FORM_URL.indexOf("VLOZ-SEM") !== -1;
+
+  if (placeholder){
+    const warn = document.createElement("div");
+    warn.className = "warn";
+    warn.innerHTML = "<b>Pozn. pre správcu stránky:</b> v súbore <code>index.html</code> nastav premennú <code>FORM_URL</code> na odkaz na váš Google formulár. Túto hlášku uvidíš len dovtedy.";
+    card.appendChild(warn);
+  }
+
+  const cta = document.createElement("a");
+  cta.className = "cta";
+  cta.href = placeholder ? "#" : FORM_URL;
+  cta.target = "_blank";
+  cta.rel = "noopener";
+  cta.textContent = "Zapíš sa do DeKa";
+  const arrow = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  arrow.setAttribute("width", "18"); arrow.setAttribute("height", "18");
+  arrow.setAttribute("viewBox", "0 0 18 18"); arrow.setAttribute("fill", "none");
+  arrow.setAttribute("aria-hidden", "true");
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "M3 9h12M10 4l5 5-5 5");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-width", "2.2");
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("stroke-linejoin", "round");
+  arrow.appendChild(path);
+  cta.appendChild(arrow);
+  card.appendChild(cta);
+
+  if (EMBED_FORM && !placeholder){
+    const box = document.createElement("div");
+    box.className = "formbox";
+    const frame = document.createElement("iframe");
+    frame.src = toEmbedUrl(FORM_URL);
+    frame.title = "Prihlasovací formulár do DeKa tímu";
+    frame.loading = "lazy";
+    box.appendChild(frame);
+    card.appendChild(box);
+  }
+
+  const footrow = document.createElement("div");
+  footrow.className = "footrow";
+  const back = document.createElement("button");
+  back.type = "button";
+  back.className = "back";
+  back.textContent = "← Späť";
+  back.addEventListener("click", () => { index = STEPS.length - 1; renderStep(); });
+  const restart = document.createElement("button");
+  restart.type = "button";
+  restart.className = "restart";
+  restart.textContent = "Začať odznova";
+  restart.addEventListener("click", () => { answers = {}; index = 0; renderStep(); });
+  footrow.appendChild(back);
+  footrow.appendChild(restart);
+  card.appendChild(footrow);
+
+  stage.replaceChildren(card);
+}
+
+/* forms.gle odkazy sa do iframe vložiť nedajú, docs.google.com/forms/... áno */
+function toEmbedUrl(url){
+  if (url.indexOf("docs.google.com") === -1) return url;
+  return url.indexOf("?") === -1 ? url + "?embedded=true" : url + "&embedded=true";
+}
+
+renderStep();
+</script>
+</body>
+</html>
