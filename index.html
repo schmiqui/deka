@@ -162,6 +162,11 @@ body{
   font-size:14px;color:var(--ink-soft);font-weight:500;
 }
 .reply b{color:var(--accent);font-weight:700}
+.timer{height:3px;border-radius:99px;background:var(--line);overflow:hidden;opacity:0;transition:opacity .25s ease}
+.timer.run{opacity:1}
+.timer i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px}
+.timer.run i{animation:fill 3s linear forwards}
+@keyframes fill{from{width:0}to{width:100%}}
 
 .footrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .back{
@@ -251,6 +256,9 @@ body{
    ============================================================ */
 const FORM_URL  = "https://docs.google.com/forms/d/e/1FAIpQLScfN37FO8SW8bMNUp3-OwYFroP4I6U4TGB8zJYYVyV5S9jHGg/viewform";
 const EMBED_FORM = true;
+
+/* Ako dlho (v ms) ostane na obrazovke reakcia na odpoved, kym sa ide dalej. */
+const READ_PAUSE = 3000;
 
 const STEPS = [
   {
@@ -384,6 +392,11 @@ function renderStep(){
   const reply = document.createElement("p");
   reply.className = "reply";
 
+  const timer = document.createElement("div");
+  timer.className = "timer";
+  timer.setAttribute("aria-hidden", "true");
+  timer.appendChild(document.createElement("i"));
+
   step.options.forEach((opt, i) => {
     const btn = document.createElement("button");
     btn.type = "button";
@@ -407,12 +420,12 @@ function renderStep(){
       const b = document.createElement("b");
       b.textContent = opt.reply;
       reply.appendChild(b);
-      const wait = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 60 : 620;
+      timer.classList.add("run");
       setTimeout(() => {
         index++;
         index >= STEPS.length ? renderFinal() : renderStep();
         window.scrollTo({ top: 0, behavior: "smooth" });
-      }, wait);
+      }, READ_PAUSE);
     });
 
     list.appendChild(btn);
@@ -420,6 +433,7 @@ function renderStep(){
 
   card.appendChild(list);
   card.appendChild(reply);
+  card.appendChild(timer);
 
   if (index > 0){
     const footrow = document.createElement("div");
