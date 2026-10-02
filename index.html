@@ -201,14 +201,50 @@ body{
 .cta:active{transform:translateY(1px);box-shadow:0 1px 0 var(--edge)}
 .cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .cta svg{flex:0 0 auto}
-.formbox{
-  border:2px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--surface);
+.card.final{padding:0;gap:0;overflow:hidden}
+.final-head{
+  display:flex;flex-direction:column;align-items:flex-start;gap:14px;
+  padding:26px 20px 22px;
+  background:color-mix(in srgb, var(--accent) 9%, var(--surface));
+  border-bottom:2px solid var(--edge);
 }
-.formbox iframe{display:block;width:100%;height:760px;border:0}
-.caption{
-  margin:0 0 -6px;font-size:12px;font-weight:700;color:var(--ink-soft);
-  text-transform:uppercase;letter-spacing:.1em;
+.final-body{display:flex;flex-direction:column;gap:20px;padding:20px}
+.tipbadge{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--surface);border:2px solid var(--accent);border-radius:99px;
+  padding:6px 14px;font-size:14px;font-weight:700;color:var(--ink);
 }
+.tipbadge em{
+  font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent);
+}
+.seclabel{
+  margin:0;display:flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+}
+.seclabel::after{content:"";flex:1;height:1.5px;background:var(--line);border-radius:2px}
+.block{display:flex;flex-direction:column;gap:13px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.steps li{display:grid;grid-template-columns:27px 1fr;gap:12px;align-items:start}
+.steps .num{
+  width:27px;height:27px;border-radius:50%;display:grid;place-items:center;
+  background:var(--accent);color:var(--on-accent);
+  font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;
+}
+.steps b{display:block;font-size:15px;line-height:1.3}
+.steps span{display:block;font-size:13.5px;color:var(--ink-soft);line-height:1.45}
+.formmod{
+  border:2px solid var(--edge);border-radius:14px;overflow:hidden;
+  box-shadow:0 3px 0 var(--edge);background:var(--surface);
+}
+.modhead{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:12px 14px;border-bottom:2px solid var(--edge);
+  background:color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+.modhead h3{margin:0;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:16px}
+.modhead .hint{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft)}
+.formmod iframe{display:block;width:100%;height:var(--form-height,900px);border:0;background:var(--surface)}
 .warn{
   border:2px dashed var(--c4);border-radius:12px;padding:12px 14px;
   font-size:13.5px;color:var(--ink-soft);background:var(--paper);
@@ -263,6 +299,12 @@ const EMBED_FORM = true;
 
 /* Ako dlho (v ms) ostane na obrazovke reakcia na odpoved, kym sa ide dalej. */
 const READ_PAUSE = 2000;
+
+/* Vyska vlozeneho formulara v pixeloch. Google Forms je na inej domene,
+   takze sa ramcek nevie prisposobit obsahu sam — pri dlhsom formulari sa
+   scrolluje vo vnutri. Ak chcete mat na stranke len tlacidlo a formular
+   otvarat v novej karte, dajte EMBED_FORM na false. */
+const FORM_HEIGHT = "900px";
 
 const STEPS = [
   {
@@ -460,55 +502,81 @@ function renderFinal(){
   renderProgress();
 
   const tip = answers["rola"] && answers["rola"].tip;
+  const placeholder = FORM_URL.indexOf("VLOZ-SEM") !== -1;
 
   const card = document.createElement("section");
-  card.className = "card anim";
+  card.className = "card final anim";
+
+  /* --- tonovana hlavicka --- */
+  const head = document.createElement("div");
+  head.className = "final-head";
 
   const eyebrow = document.createElement("p");
   eyebrow.className = "eyebrow";
   eyebrow.textContent = "A je to";
-  card.appendChild(eyebrow);
+  head.appendChild(eyebrow);
 
   const verdict = document.createElement("h2");
   verdict.className = "verdict";
   verdict.textContent = "Poď do DeKa tímu.";
-  card.appendChild(verdict);
+  head.appendChild(verdict);
 
   if (tip){
-    const lead = document.createElement("p");
-    lead.className = "note";
-    lead.textContent = "Podľa odpovedí by ti sadlo \u201E" + tip
-      + "\u201C \u2014 ale konkrétnu rolu si vyberieš až potom, ako si to naživo pozrieš.";
-    card.appendChild(lead);
+    const badge = document.createElement("p");
+    badge.className = "tipbadge";
+    const em = document.createElement("em");
+    em.textContent = "Sadlo by ti";
+    badge.appendChild(em);
+    badge.appendChild(document.createTextNode(tip));
+    head.appendChild(badge);
   }
 
   const note = document.createElement("p");
   note.className = "note";
-  note.textContent = "Vo formulári nám nechaj meno, vek a e-mail. Ozveme sa ti a napíšeme, "
-    + "kedy je najbližšie stretnutie a ako to celé prebieha. Nič sa tým nezaväzuješ \u2014 "
-    + "prvýkrát môžeš prísť len tak pozrieť sa, či ti to sadne.";
-  card.appendChild(note);
+  note.textContent = "Nič sa tým nezaväzuješ. Konkrétnu rolu si vyberieš až potom, "
+    + "ako si to naživo pozrieš.";
+  head.appendChild(note);
 
-  const chips = document.createElement("ul");
-  chips.className = "chips";
-  STEPS.forEach(step => {
-    const a = answers[step.id];
-    if (!a) return;
+  card.appendChild(head);
+
+  /* --- telo --- */
+  const body = document.createElement("div");
+  body.className = "final-body";
+
+  const flow = document.createElement("div");
+  flow.className = "block";
+  flow.appendChild(sectionLabel("Ako to bude ďalej"));
+
+  const steps = document.createElement("ol");
+  steps.className = "steps";
+  [
+    ["Vyplníš formulár", "Meno, vek a e-mail. Zaberie to pol minúty."],
+    ["Ozveme sa ti", "Napíšeme, kedy je najbližšie stretnutie a ako to celé prebieha."],
+    ["Prídeš sa pozrieť", "Prvýkrát len tak, bez záväzku. Potom sa rozhodneš."]
+  ].forEach((pair, i) => {
     const li = document.createElement("li");
-    const b = document.createElement("b");
-    b.textContent = a.v;
-    li.appendChild(b);
-    chips.appendChild(li);
+    const num = document.createElement("span");
+    num.className = "num";
+    num.textContent = String(i + 1);
+    const text = document.createElement("div");
+    const title = document.createElement("b");
+    title.textContent = pair[0];
+    const desc = document.createElement("span");
+    desc.textContent = pair[1];
+    text.appendChild(title);
+    text.appendChild(desc);
+    li.appendChild(num);
+    li.appendChild(text);
+    steps.appendChild(li);
   });
-  card.appendChild(chips);
-
-  const placeholder = FORM_URL.indexOf("VLOZ-SEM") !== -1;
+  flow.appendChild(steps);
+  body.appendChild(flow);
 
   if (placeholder){
     const warn = document.createElement("div");
     warn.className = "warn";
     warn.innerHTML = "<b>Pozn. pre správcu stránky:</b> v súbore <code>index.html</code> nastav premennú <code>FORM_URL</code> na odkaz na váš Google formulár. Túto hlášku uvidíš len dovtedy.";
-    card.appendChild(warn);
+    body.appendChild(warn);
   }
 
   const cta = document.createElement("a");
@@ -529,23 +597,49 @@ function renderFinal(){
   path.setAttribute("stroke-linejoin", "round");
   arrow.appendChild(path);
   cta.appendChild(arrow);
-  card.appendChild(cta);
+  body.appendChild(cta);
 
   if (EMBED_FORM && !placeholder){
-    const caption = document.createElement("p");
-    caption.className = "caption";
-    caption.textContent = "Alebo ho vyplň rovno tu";
-    card.appendChild(caption);
+    const mod = document.createElement("div");
+    mod.className = "formmod";
 
-    const box = document.createElement("div");
-    box.className = "formbox";
+    const modhead = document.createElement("div");
+    modhead.className = "modhead";
+    const h3 = document.createElement("h3");
+    h3.textContent = "Prihláška";
+    const hint = document.createElement("span");
+    hint.className = "hint";
+    hint.textContent = "Vyplň rovno tu";
+    modhead.appendChild(h3);
+    modhead.appendChild(hint);
+    mod.appendChild(modhead);
+
+    mod.style.setProperty("--form-height", FORM_HEIGHT);
+
     const frame = document.createElement("iframe");
     frame.src = toEmbedUrl(FORM_URL);
     frame.title = "Prihlasovací formulár do DeKa tímu";
     frame.loading = "lazy";
-    box.appendChild(frame);
-    card.appendChild(box);
+    mod.appendChild(frame);
+    body.appendChild(mod);
   }
+
+  const recap = document.createElement("div");
+  recap.className = "block";
+  recap.appendChild(sectionLabel("Tvoje odpovede"));
+  const chips = document.createElement("ul");
+  chips.className = "chips";
+  STEPS.forEach(step => {
+    const a = answers[step.id];
+    if (!a) return;
+    const li = document.createElement("li");
+    const b = document.createElement("b");
+    b.textContent = a.v;
+    li.appendChild(b);
+    chips.appendChild(li);
+  });
+  recap.appendChild(chips);
+  body.appendChild(recap);
 
   const footrow = document.createElement("div");
   footrow.className = "footrow";
@@ -561,9 +655,17 @@ function renderFinal(){
   restart.addEventListener("click", () => { answers = {}; index = 0; renderStep(); });
   footrow.appendChild(back);
   footrow.appendChild(restart);
-  card.appendChild(footrow);
+  body.appendChild(footrow);
 
+  card.appendChild(body);
   stage.replaceChildren(card);
+}
+
+function sectionLabel(text){
+  const el = document.createElement("p");
+  el.className = "seclabel";
+  el.textContent = text;
+  return el;
 }
 
 /* forms.gle odkazy sa do iframe vložiť nedajú, docs.google.com/forms/... áno */
