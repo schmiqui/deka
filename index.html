@@ -165,7 +165,7 @@ body{
 .timer{height:3px;border-radius:99px;background:var(--line);overflow:hidden;opacity:0;transition:opacity .25s ease}
 .timer.run{opacity:1}
 .timer i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px}
-.timer.run i{animation:fill 3s linear forwards}
+.timer.run i{animation:fill 2s linear forwards}
 @keyframes fill{from{width:0}to{width:100%}}
 
 .footrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -262,7 +262,7 @@ const FORM_URL  = "https://docs.google.com/forms/d/e/1FAIpQLScfN37FO8SW8bMNUp3-O
 const EMBED_FORM = true;
 
 /* Ako dlho (v ms) ostane na obrazovke reakcia na odpoved, kym sa ide dalej. */
-const READ_PAUSE = 3000;
+const READ_PAUSE = 2000;
 
 const STEPS = [
   {
